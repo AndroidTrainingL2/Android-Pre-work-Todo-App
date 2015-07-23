@@ -4,6 +4,7 @@
 * list todo list
 * add todo item
 * remove todo item via longClick
+* edit/save item
 
 ### Walkthough
 ![Video Walkthrough](prework-demo.gif)
