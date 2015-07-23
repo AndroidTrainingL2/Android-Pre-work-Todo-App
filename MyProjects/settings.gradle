@@ -1,0 +1,2 @@
+include ':SimpleToDo'
+project(':SimpleToDo').projectDir = new File(settingsDir, 'SimpleToDo')
