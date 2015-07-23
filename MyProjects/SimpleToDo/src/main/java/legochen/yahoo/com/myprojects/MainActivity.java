@@ -1,6 +1,7 @@
 package legochen.yahoo.com.myprojects;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
+    final public static Integer REQUEST_CODE = 0;
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
@@ -67,6 +70,17 @@ public class MainActivity extends Activity {
                     }
                 }
         );
+
+        lvItems.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                        intent.putExtra("position", String.valueOf(position));
+                        intent.putExtra("itemText", items.get(position));
+                        startActivityForResult(intent, REQUEST_CODE);
+                    }
+                });
     }
 
     private void readItems() {
@@ -86,6 +100,20 @@ public class MainActivity extends Activity {
             FileUtils.writeLines(todoFile, items);
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+            String oldText = data.getStringExtra("oldText");
+            String newText = data.getStringExtra("newText");
+            int position = Integer.parseInt(data.getStringExtra("position"));
+            String promptMsg = "Change item text from " + oldText + " to " + newText + "(" + String.valueOf(position) + ")";
+            items.set(position, newText);
+            writeItems();
+            itemsAdapter.notifyDataSetChanged();
+            Toast.makeText(this, promptMsg, Toast.LENGTH_LONG).show();
         }
     }
 
